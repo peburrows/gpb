@@ -27,6 +27,7 @@ Nonterminals
         opt_enum_opts enum_opts enum_opt
         message_def msg_elems msg_elem
         opt_field_opts field_opts field_opt occurrence type
+        map_def
         package_def
         import_def
         identifiers
@@ -47,7 +48,7 @@ Terminals
         required optional repeated
         double float int32 int64 uint32
         uint64 sint32 sint64 fixed32 fixed64
-        sfixed32 sfixed64 bool string bytes
+        sfixed32 sfixed64 bool string bytes map
         identifier str_lit dec_lit oct_lit hex_lit float_lit bool_lit
         default
         import
@@ -57,7 +58,7 @@ Terminals
         service rpc returns
         packed deprecated
         syntax
-        '.' ';' '(' ')' '{' '}' '[' ']' '=' ','
+        '.' ';' '(' ')' '{' '}' '[' ']' '=' ',' '<' '>'
         .
 
 Rootsymbol
@@ -141,6 +142,20 @@ msg_elem -> occurrence type fidentifier '=' dec_lit '[' opt_field_opts ']' ';':
                                                     name=identifier_name('$3'),
                                                     fnum=literal_value('$5'),
                                                     opts='$7'}.
+msg_elem -> type fidentifier '=' dec_lit ';':
+                                        #?gpb_field{occurrence=optional,
+                                                    type='$1',
+                                                    name=identifier_name('$2'),
+                                                    fnum=literal_value('$4'),
+                                                    opts=[]}.
+
+msg_elem -> type fidentifier '=' dec_lit '[' opt_field_opts ']' ';':
+                                        #?gpb_field{occurrence=optional,
+                                                    type='$1',
+                                                    name=identifier_name('$2'),
+                                                    fnum=literal_value('$4'),
+                                                    opts='$6'}.
+
 msg_elem -> message_def:                '$1'.
 msg_elem -> enum_def:                   '$1'.
 msg_elem -> extensions_def:             {extensions,lists:sort('$1')}.
@@ -172,6 +187,7 @@ fidentifier -> bool:                    kw_to_identifier('$1').
 fidentifier -> string:                  kw_to_identifier('$1').
 fidentifier -> bytes:                   kw_to_identifier('$1').
 fidentifier -> bool_lit:                kw_to_identifier(literal_value('$1')).
+fidentifier -> map:                     kw_to_identifier('$1').
 fidentifier -> default:                 kw_to_identifier('$1').
 fidentifier -> import:                  kw_to_identifier('$1').
 fidentifier -> option:                  kw_to_identifier('$1').
@@ -218,6 +234,7 @@ type -> sfixed64:                       sfixed64.
 type -> bool:                           bool.
 type -> string:                         string.
 type -> bytes:                          bytes.
+type -> map '<' type ',' type '>':      {map, '$3', '$5'}.
 type -> name:                           {ref, '$1'}.
 
 constant -> identifier:                 identifier_name('$1').
@@ -269,6 +286,7 @@ extend_def -> extend identifier '{' msg_elems '}':
 
 service_def -> service identifier '{' rpc_defs '}':
                                         {{service,identifier_name('$2')},'$4'}.
+
 
 rpc_defs -> rpc_def rpc_defs:           ['$1' | '$2'].
 rpc_defs -> ';' rpc_defs:               '$2'.

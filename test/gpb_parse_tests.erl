@@ -78,6 +78,14 @@ parses_string_concatenation_test() ->
            "  optional string x=1 [default='a''b' 'c'];", %% = "abc" hopefully
            "}"]).
 
+parses_map_value_test() ->
+    {ok, [{{msg,'Msg'}, [#?gpb_field{name=x, type={map,string,string}, fnum=1}]}]} =
+        parse_lines(
+         ["message Msg {",
+          "  map<string, string> x = 1;",
+          %% "string x=1;"
+          "}"]).
+
 parses_nested_messages_test() ->
     {ok, [{{msg,'Msg'}, [{{msg,'Msg2'},[#?gpb_field{name=x}]},
                          #?gpb_field{name=y}]}]} =

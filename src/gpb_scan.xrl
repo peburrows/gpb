@@ -60,6 +60,7 @@ extensions      : {token, {extensions,TokenLine}}.
 extend          : {token, {extend,TokenLine}}.
 to              : {token, {to,TokenLine}}.
 max             : {token, {max,TokenLine}}.
+map             : {token, {map,TokenLine}}.
 
 service         : {token, {service,TokenLine}}.
 rpc             : {token, {rpc,TokenLine}}.
@@ -105,6 +106,8 @@ syntax          : {token, {syntax,TokenLine}}.
 \)              : {token, {')', TokenLine}}.
 =               : {token, {'=', TokenLine}}.
 ,               : {token, {',', TokenLine}}.
+<               : {token, {'<', TokenLine}}.
+>               : {token, {'>', TokenLine}}.
 
 
 
