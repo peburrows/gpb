@@ -27,7 +27,6 @@ Nonterminals
         opt_enum_opts enum_opts enum_opt
         message_def msg_elems msg_elem
         opt_field_opts field_opts field_opt occurrence type
-        map_def
         package_def
         import_def
         identifiers
